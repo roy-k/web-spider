@@ -1,6 +1,8 @@
 import c from 'ansi-colors'
 import axios from 'axios'
 import cheerio from 'cheerio'
+import Async from 'async'
+import { flatten } from 'lodash'
 
 type SelectorProps = {
     type?: 'text' | 'prop' | 'attr'
@@ -8,7 +10,7 @@ type SelectorProps = {
     formatter?: (text: string) => string
 }
 
-type PageOptions = {
+type OptionsConfig = {
     selector: string
     /** 单项数据的 key 选择器 */
     // todo 多种多样的数据提取
@@ -22,12 +24,15 @@ type PageOptions = {
     }
     // 分页相关设计
     page?: {
-        total?: string
+        /** 1. 选定页面 (适用于测试或只有单独一层数据时) */
+        range?: [number, number]
+        /** 2. 动态 */
         // * url | xhr 细节 ...
-        composeUrlFn?: (pageNumber: number | string) => string
+        composeUrlFn: (baseUrl: string, pageNumber: number | string) => string
     }
+    filter?: (text: string) => boolean
 }
-function readPageData(pageData: string, options: PageOptions) {
+function readPageData(pageData: string, options: OptionsConfig) {
     const { selector, keySelector, selectorProps, extraInfo, page } = options
 
     try {
@@ -111,7 +116,7 @@ function readPageData(pageData: string, options: PageOptions) {
 export type CollectRowListConfig = {
     baseUrl: string
     /** 列表元素选择器 */
-    pageOptions: PageOptions
+    options: OptionsConfig
 }
 export type CollectRowListItem = {
     key: string
@@ -119,14 +124,8 @@ export type CollectRowListItem = {
         [props: string]: string
     }
 }
-export async function collectRowList(config: CollectRowListConfig): Promise<CollectRowListItem[]> {
-    const { baseUrl, pageOptions } = config
-    const { selector, keySelector, ...rest } = pageOptions
-
-    if (!baseUrl || !selector || !keySelector) {
-        console.log(c.bgRed('config error: baseUrl/selector/keySelector can not be empty'))
-        return Promise.reject()
-    }
+async function collectRowList(config: CollectRowListConfig): Promise<CollectRowListItem[]> {
+    const { baseUrl, options } = config
 
     try {
         const { status, request, data } = await axios.get(baseUrl)
@@ -138,17 +137,88 @@ export async function collectRowList(config: CollectRowListConfig): Promise<Coll
 
         console.log(`页面请求完成, 开始解析数据`)
 
-        const result = readPageData(data, pageOptions)
-
-        console.log('result: ', result)
+        const result = readPageData(data, options)
 
         return result
     } catch (error) {
         console.log(c.red(error.toString()))
 
-        if (error) {
-        }
+        return []
+    }
+}
+
+async function queueCollectRow(config: CollectRowListConfig, urls: string[]): Promise<CollectRowListItem[]> {
+    // todo async 抽取相关
+
+    try {
+        return await new Promise((resolve, reject) => {
+            Async.mapSeries(
+                urls,
+                async (baseUrl, callback) => {
+                    const pageList = await collectRowList({ ...config, baseUrl })
+
+                    callback(null, pageList)
+                },
+                (err, data) => {
+                    if (err) {
+                        console.log('queue error: ', err, data)
+
+                        resolve([])
+                    }
+
+                    if (!data) {
+                        resolve([])
+                    }
+
+                    const flatData = flatten(data) as CollectRowListItem[]
+
+                    resolve(flatData)
+                }
+            )
+        })
+    } catch (error) {
+        return []
+    }
+}
+
+// todo 分发类型
+export async function collectRow(config: CollectRowListConfig) {
+    const { baseUrl, options } = config
+    const { selector, keySelector, page } = options
+
+    // 参数检测
+    if (!baseUrl || !selector || !keySelector) {
+        console.log(c.bgRed('config error: baseUrl/selector/keySelector can not be empty'))
+        return Promise.reject()
     }
 
-    return []
+    // 分页处理
+    if (page) {
+        const { range, composeUrlFn } = page
+
+        // 区间
+        if (range) {
+            //
+            const [start, end] = range
+            const len = end - start + 1
+
+            if (!len || len <= 0) {
+                console.log(c.red(`error range: [${start}, ${end}]`))
+                throw 'error range'
+            }
+
+            const urls = Array(len)
+                .fill(true)
+                .map((e, index) => {
+                    return composeUrlFn(baseUrl, start + index)
+                })
+
+            return await queueCollectRow(config, urls)
+        }
+
+        return []
+    } else {
+        // 单页数据
+        return await collectRowList(config)
+    }
 }

@@ -929,6 +929,11 @@
   dependencies:
     "@types/jest-diff" "*"
 
+"@types/lodash@^4.14.138":
+  version "4.14.138"
+  resolved "https://registry.npm.taobao.org/@types/lodash/download/@types/lodash-4.14.138.tgz?cache=0&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2F%40types%2Flodash%2Fdownload%2F%40types%2Flodash-4.14.138.tgz#34f52640d7358230308344e579c15b378d91989e"
+  integrity sha1-NPUmQNc1gjAwg0TlecFbN42RmJ4=
+
 "@types/node-schedule@^1.2.4":
   version "1.2.4"
   resolved "https://registry.yarnpkg.com/@types/node-schedule/-/node-schedule-1.2.4.tgz#2dce38dd7d87e77cd293113ac72f795fb9f6dfe0"
@@ -3761,6 +3766,11 @@ lodash@^4.15.0, lodash@^4.17.11, lodash@^4.17.13:
   version "4.17.15"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.15.tgz#b447f6670a0455bbfeedd11392eff330ea097548"
   integrity sha512-8xOcRHvCjnocdS5cpwXQXVzmmh5e5+saE2QGoeQmbKmRS6J3VQppPOIt0MnmE+4xlZoumy0GPG0D0MVIQbNA1A==
+
+lodash@^4.17.15:
+  version "4.17.15"
+  resolved "https://registry.npm.taobao.org/lodash/download/lodash-4.17.15.tgz?cache=0&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Flodash%2Fdownload%2Flodash-4.17.15.tgz#b447f6670a0455bbfeedd11392eff330ea097548"
+  integrity sha1-tEf2ZwoEVbv+7dETku/zMOoJdUg=
 
 log4js@^5.1.0:
   version "5.1.0"
