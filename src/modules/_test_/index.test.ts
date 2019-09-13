@@ -1,15 +1,18 @@
-import { collectRow, CollectRowListConfig } from '../rowList'
+import { si, SiConfig } from '../si'
 
 // errors test
 
-const rowListWithoutPage: CollectRowListConfig = {
-    baseUrl: 'http://localhost:3098/page1.html',
+const rowListWithoutPage: SiConfig = {
+    target: 'http://localhost:3098/page1.html',
     options: {
         selector: '.item-list',
-        keySelector: '.post-box-title a',
-        selectorProps: {
-            type: 'prop',
-            name: 'href',
+        key: {
+            selector: '.post-box-title a',
+
+            selectorProps: {
+                type: 'prop',
+                name: 'href',
+            },
         },
         extraInfo: {
             title: {
@@ -28,7 +31,7 @@ const rowListWithoutPage: CollectRowListConfig = {
     },
 }
 test('collectRowList normal', async () => {
-    const data = await collectRow(rowListWithoutPage)
+    const data = await si(rowListWithoutPage)
 
     expect(data.length).toBe(10)
 
@@ -40,27 +43,40 @@ test('collectRowList normal', async () => {
     expect(extraInfo.title).toMatch(/.+/)
     expect(extraInfo.data).toMatch(/.+/)
     expect(extraInfo.views).toMatch(/.+/)
-}, 30000)
+})
 
-const rowListWithPage: CollectRowListConfig = {
-    baseUrl: 'http://localhost:3098',
+const rowListWithPage: SiConfig = {
+    target: () => {
+        return [1, 2, 3].map(page => `http://localhost:3098/page${page}.html`)
+    },
     options: {
         selector: '.item-list',
-        keySelector: '.post-box-title a',
-        selectorProps: {
-            type: 'prop',
-            name: 'href',
+        key: {
+            selector: '.post-box-title a',
+
+            selectorProps: {
+                type: 'prop',
+                name: 'href',
+            },
         },
-        page: {
-            range: [1, 3],
-            composeUrlFn(baseUrl, pageNumber) {
-                return `${baseUrl}/page${pageNumber}.html`
+        extraInfo: {
+            title: {
+                selector: '.post-box-title a',
+            },
+            data: {
+                selector: '.post-meta .tie-date',
+            },
+            views: {
+                selector: '.post-meta .post-views',
+                selectorProps: {
+                    formatter: (text: string) => text.trim(),
+                },
             },
         },
     },
 }
 test('collectRowList with pages', async () => {
-    const data = await collectRow(rowListWithPage)
+    const data = await si(rowListWithPage)
 
     expect(data.length).toBe(30)
-}, 30000)
+})
