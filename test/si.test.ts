@@ -1,4 +1,4 @@
-import { si, SiConfig } from '../si'
+import { si, SiConfig } from '../src/si'
 
 // errors test
 
@@ -47,30 +47,15 @@ test('collectRowList normal', async () => {
 
 const rowListWithPage: SiConfig = {
     target: () => {
-        return [1, 2, 3].map(page => `http://localhost:3098/page${page}.html`)
+        return [1, 2].map(page => `http://localhost:3098/page${page}.html`)
     },
     options: {
         selector: '.item-list',
         key: {
             selector: '.post-box-title a',
-
             selectorProps: {
                 type: 'prop',
                 name: 'href',
-            },
-        },
-        extraInfo: {
-            title: {
-                selector: '.post-box-title a',
-            },
-            data: {
-                selector: '.post-meta .tie-date',
-            },
-            views: {
-                selector: '.post-meta .post-views',
-                selectorProps: {
-                    formatter: (text: string) => text.trim(),
-                },
             },
         },
     },
@@ -78,5 +63,5 @@ const rowListWithPage: SiConfig = {
 test('collectRowList with pages', async () => {
     const data = await si(rowListWithPage)
 
-    expect(data.length).toBe(30)
+    expect(data.length).toBe(20)
 })

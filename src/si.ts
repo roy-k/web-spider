@@ -3,7 +3,7 @@ import axios from 'axios'
 import cheerio from 'cheerio'
 import Async from 'async'
 import { flatten } from 'lodash'
-import { sleep } from '../util'
+import { sleep } from 'src/util'
 
 export type TargetGenerator = () => string[]
 

@@ -1,6 +1,7 @@
 dist
 logs
 build
+lib
 compiled
 *.log
 coverage
