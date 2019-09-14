@@ -1,4 +1,5 @@
-import { si, SiConfig } from '../src/si'
+import { SiConfig } from '../src/types'
+import { si } from '../src/si'
 
 // errors test
 
@@ -33,7 +34,7 @@ const rowListWithoutPage: SiConfig = {
 test('collectRowList normal', async () => {
     const data = await si(rowListWithoutPage)
 
-    expect(data.length).toBe(10)
+    expect(data.length).toBeGreaterThan(1)
 
     const first = data[0]
 
@@ -63,5 +64,5 @@ const rowListWithPage: SiConfig = {
 test('collectRowList with pages', async () => {
     const data = await si(rowListWithPage)
 
-    expect(data.length).toBe(20)
+    expect(data.length).toBe(6)
 })
