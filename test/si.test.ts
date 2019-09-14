@@ -1,7 +1,11 @@
 import { SiConfig } from '../src/types'
+import * as getPageData from '../src/modules/getPageData'
+import * as readPageData from '../src/modules/readPageData'
+
 import { si } from '../src/si'
 
-// errors test
+jest.mock('../src/modules/getPageData')
+jest.mock('../src/modules/readPageData')
 
 const rowListWithoutPage: SiConfig = {
     target: 'http://localhost:3098/page1.html',
@@ -15,35 +19,16 @@ const rowListWithoutPage: SiConfig = {
                 name: 'href',
             },
         },
-        extraInfo: {
-            title: {
-                selector: '.post-box-title a',
-            },
-            data: {
-                selector: '.post-meta .tie-date',
-            },
-            views: {
-                selector: '.post-meta .post-views',
-                selectorProps: {
-                    formatter: (text: string) => text.trim(),
-                },
-            },
-        },
     },
 }
-test('collectRowList normal', async () => {
-    const data = await si(rowListWithoutPage)
+test('single page', async () => {
+    await si(rowListWithoutPage)
 
-    expect(data.length).toBeGreaterThan(1)
+    expect(getPageData.getPageData).toHaveBeenCalled()
+    expect(getPageData.getPageData).toHaveBeenCalledTimes(1)
 
-    const first = data[0]
-
-    const { key, extraInfo = {} } = first
-
-    expect(key).toMatch(/.+/)
-    expect(extraInfo.title).toMatch(/.+/)
-    expect(extraInfo.data).toMatch(/.+/)
-    expect(extraInfo.views).toMatch(/.+/)
+    expect(readPageData.getFieldsFromPageData).toHaveBeenCalled()
+    expect(readPageData.getFieldsFromPageData).toHaveBeenCalledTimes(1)
 })
 
 const rowListWithPage: SiConfig = {
@@ -61,8 +46,10 @@ const rowListWithPage: SiConfig = {
         },
     },
 }
-test('collectRowList with pages', async () => {
-    const data = await si(rowListWithPage)
+test('muti pages', async () => {
+    await si(rowListWithPage)
 
-    expect(data.length).toBe(6)
+    // 加上上面1次
+    expect(getPageData.getPageData).toHaveBeenCalledTimes(3)
+    expect(readPageData.getFieldsFromPageData).toHaveBeenCalledTimes(3)
 })

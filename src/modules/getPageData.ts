@@ -1,7 +1,8 @@
 import c from 'ansi-colors'
 import axios from 'axios'
 
-export default async function getPageData(target: string, retryTimes = 1): Promise<string> {
+
+export async function getPageData(target: string, retryTimes = 1): Promise<string> {
     try {
         const { status, request, data } = await axios.get(target)
 

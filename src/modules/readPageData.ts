@@ -17,8 +17,6 @@ export function getFieldsFromPageData(pageData: string, options: SiOptions) {
 
             const keyValue = getElementField($Item, key)
 
-            const keyEl = $Item.find(selector)
-
             const res: CollectRowListItem = {
                 key: keyValue,
             }
@@ -71,4 +69,4 @@ export function getElementField(el: Cheerio, fieldProp: FieldProps) {
     }
 }
 
-export default getFieldsFromPageData
+// export default getFieldsFromPageData

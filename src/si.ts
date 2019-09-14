@@ -4,7 +4,7 @@ import { flatten } from 'lodash'
 import { sleep } from 'src/util'
 
 import { SiConfig, SiTarget, FieldProps, SiOptions, CollectRowListItem } from './types'
-import getPageData from './modules/getPageData'
+import {getPageData} from './modules/getPageData'
 import { getFieldsFromPageData } from './modules/readPageData'
 import { mapTask } from './modules/mapTask'
 
@@ -96,7 +96,6 @@ export async function si(config: SiConfig) {
 
     const targetList = getTargetList(target)
 
-    // const result = await mapTargets(targetList, options)
     const result = await mapTask(
         targetList,
         async (target, retryTimes) => {
