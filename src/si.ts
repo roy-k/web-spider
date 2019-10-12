@@ -1,9 +1,9 @@
 import c from 'ansi-colors'
 import Async from 'async'
 import { flatten } from 'lodash'
-import { sleep } from 'src/util'
+import { sleep } from './util'
 
-import { SiConfig, SiTarget, FieldProps, SiOptions, CollectRowListItem } from './types'
+import { SiConfig, SiTarget, FieldProps, SiOptions, CollectRowListItem } from '../types'
 import {getPageData} from './modules/getPageData'
 import { getFieldsFromPageData } from './modules/readPageData'
 import { mapTask } from './modules/mapTask'

@@ -1,9 +1,9 @@
 {
-  "name": "siphon",
-  "version": "0.1.0",
+  "name": "siphon-web",
+  "version": "0.1.7",
   "description": "make up a web spider with a few regular module。",
-  "main": "lib/index",
-  "types": "lib/index",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
   "scripts": {
     "test": "jest --detectOpenHandles",
     "test:live": "nodemon --watch 'src/**/*.ts' --exec npm run test",

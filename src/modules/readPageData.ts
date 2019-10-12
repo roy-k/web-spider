@@ -1,7 +1,7 @@
 import c from 'ansi-colors'
 import cheerio from 'cheerio'
 
-import { FieldProps, SiOptions, CollectRowListItem } from 'src/types'
+import { FieldProps, SiOptions, CollectRowListItem } from '../../types'
 
 export function getFieldsFromPageData(pageData: string, options: SiOptions) {
     const { selector, key, extraInfo, page } = options
