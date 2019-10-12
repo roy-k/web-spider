@@ -37,54 +37,7 @@ function getTargetList(target: SiTarget): string[] {
     return []
 }
 
-// async function mapTargets(targets: string[], options: SiOptions): Promise<CollectRowListItem[]> {
-//     const { interval = 1000, parallelLimit = 1, retryTimes } = options
-
-//     return await new Promise((resolve, reject) => {
-//         Async.mapLimit(
-//             targets,
-//             parallelLimit,
-//             async (target, cb) => {
-//                 try {
-//                     const pageData = await getPageData(target, retryTimes)
-
-//                     const result = getFieldsFromPageData(pageData, options)
-
-//                     await sleep(interval)
-
-//                     cb(null, result)
-//                 } catch (error) {
-//                     await sleep(interval)
-
-//                     cb(null, {
-//                         key: target,
-//                         extraInfo: {
-//                             info: '解析页面出错',
-//                         },
-//                     })
-//                 }
-//             },
-//             (error, data) => {
-//                 if (error) {
-//                     reject(error)
-//                 } else {
-//                     if (!data) {
-//                         resolve([])
-//                     }
-
-//                     const flatData = flatten(data) as CollectRowListItem[]
-
-//                     resolve(flatData)
-//                 }
-//             }
-//         )
-//     })
-// }
-
-// task handle todo
-
 // siphon
-
 export async function si(config: SiConfig) {
     if (!checkSiConfig(config)) {
         return []

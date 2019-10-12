@@ -1,5 +1,5 @@
 {
-  "name": "web-spider",
+  "name": "siphon",
   "version": "0.1.0",
   "description": "make up a web spider with a few regular module。",
   "main": "lib/index",
