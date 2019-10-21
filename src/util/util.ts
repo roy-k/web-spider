@@ -16,9 +16,12 @@ type AsyncFn = () => Promise<any>
  * @param fn promise 函数
  * @param times 重试次数
  */
-export async function repeatAsync(fn: AsyncFn, times: number) {
+export async function repeatAsync(fn: AsyncFn, times = 1) {
     if(times <= 0) {
-        throw new Error('times bad!');
+        throw new Error(`bad times set: ${times}`);
+    }
+    if(times === 1) {
+        return fn()
     }
     while (times > 0) {
         try {

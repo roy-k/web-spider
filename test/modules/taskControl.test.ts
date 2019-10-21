@@ -17,6 +17,7 @@ test("mapTask normal", async () => {
         taskList: [1, 2, 3, 4],
         taskHandler: testRepeatAsync,
         parallel: 2,
+        interval: 100,
         callback: mockFn,
     }
 
@@ -30,11 +31,10 @@ test("mapTask result Array", async () => {
         taskList: [1, 2, 3, 4],
         taskHandler: testRepeatAsync,
         parallel: 2,
+        interval: 100,
     }
 
     const res = await mapTask(config)
-    console.log('res', res)
-
     expect(res.length).toBe(2)
     expect(res[0] && res[0].length).toBe(2)
 })

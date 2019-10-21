@@ -17,10 +17,9 @@ export type TaskOption = {
     interval?: number
     parallelLimit?: number
     retryTimes?: number
-    /** 是否合并多页条目 */
-    flattenList?: boolean
 }
 
+/** 抓取配置 */
 export type SiOptions = {
     /** 目标dom选择器 */
     selector: string
@@ -44,10 +43,11 @@ export type SiOptions = {
     /** 页面类型 static / dynamic */
     mode?: 'static' | 'dynamic'
 }
-/**  */
+/** 爬虫配置 */
 export type SiConfig = {
+    /** 页面地址 */
     target: SiTarget
-    /** 列表元素选择器 */
+    /** 抓取配置 */
     options: SiOptions
 }
 
@@ -67,8 +67,6 @@ export type MapTaskConfig = {
     callback?: (error: any, data: any) => void
     /** 并发数 */
     parallel?: number
-    /** 重试次数 */
-    retryTimes?: number
     /** 任务间隔 */
     interval?: number
 }

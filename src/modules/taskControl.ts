@@ -1,16 +1,14 @@
 import { MapTaskConfig } from "types"
-import { repeatAsync, sleep } from "../util/util"
+import { sleep } from "../util/util"
 
 /**
  * 异步并发
  * @param config MapTaskConfig
  */
 export async function asyncParallel(config: MapTaskConfig) {
-    const { taskList, taskHandler, retryTimes = 1 } = config
+    const { taskList, taskHandler } = config
 
-    const tasks = taskList.map(value => {
-        return repeatAsync(() => taskHandler(value), retryTimes)
-    })
+    const tasks = taskList.map(value => taskHandler(value))
     return Promise.all(tasks)
 }
 
