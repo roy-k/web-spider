@@ -12,3 +12,5 @@ legacy.d.ts
 *.orig
 
 node_modules
+
+list.md

@@ -1,6 +1,6 @@
 import Async from 'async'
 import { TaskOption, CollectRowListItem } from '../../types'
-import { sleep } from '../util'
+import { sleep } from '../util/util'
 import flatten from 'lodash/flatten'
 
 export async function mapTask(

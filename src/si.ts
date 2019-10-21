@@ -1,7 +1,7 @@
 import c from 'ansi-colors'
 import Async from 'async'
 import { flatten } from 'lodash'
-import { sleep } from './util'
+import { sleep } from './util/util'
 
 import { SiConfig, SiTarget, FieldProps, SiOptions, CollectRowListItem } from '../types'
 import {getPageData} from './modules/getPageData'

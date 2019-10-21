@@ -1,4 +1,4 @@
-import { SiConfig } from '../src/types'
+import { SiConfig } from '../types'
 import * as getPageData from '../src/modules/getPageData'
 import * as readPageData from '../src/modules/readPageData'
 

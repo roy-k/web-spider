@@ -1,4 +1,4 @@
-import { SiOptions } from '../../src/types'
+import { SiOptions } from '../../types'
 import { getFieldsFromPageData } from '../../src/modules/readPageData'
 
 const pageString = `<!DOCTYPE html>

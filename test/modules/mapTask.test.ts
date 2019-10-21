@@ -1,4 +1,4 @@
-import { TaskOption } from '../../src/types'
+import { TaskOption } from '../../types'
 import {mapTask} from '../../src/modules/mapTask'
 
 const tasks = ['a', 'b']
