@@ -2,7 +2,7 @@ import { SiConfig } from '../types'
 import * as getPageData from '../src/modules/getPageData'
 import * as readPageData from '../src/modules/readPageData'
 
-import { si } from '../src/si'
+import si from '../src/si'
 
 jest.mock('../src/modules/getPageData')
 jest.mock('../src/modules/readPageData')

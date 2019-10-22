@@ -41,9 +41,9 @@ const option: SiOptions = {
 }
 test('getFieldsFromPageData', async () => {
     const data = await getFieldsFromPageData(pageString, option)
-    expect(data.length).toBe(1)
+    expect(data && data.list.length).toBe(1)
 
-    const first = data[0]
+    const first = data && data.list[0]
 
     const { key, extraInfo = {} } = first
 

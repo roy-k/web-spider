@@ -29,12 +29,18 @@ export type SiOptions = {
     extraInfo?: {
         [field: string]: FieldProps
     }
-    /** 分页相关设计 */ 
-    page?: {
-        /** 1. 选定页面 (适用于测试或只有单独一层数据时) */
-        range?: [number, number]
-        /** 2. 动态 */
-        composeUrlFn: (target: string, pageNumber: number | string) => string
+    /** 分页相关设计 */
+
+    pagination?: {
+        /** dom选择 */
+        totalPage?: FieldProps
+        /** 连续翻页 */
+        nextPage?: FieldProps
+        formatFieldsValue?: (value: string) => number
+        /**  选定页面 (适用于测试或只有单独一层数据时) */
+        // range?: [number, number]
+        /** 分页地址组合 */
+        composeUrlFn?: (target: string, page: number | string) => string
     }
     /** 过滤器 */
     filter?: (item: CollectRowListItem) => boolean
@@ -55,6 +61,15 @@ export type CollectRowListItem = {
     key: string
     extraInfo?: {
         [props: string]: string
+    }
+
+}
+
+export type PageData = {
+    list: CollectRowListItem[]
+    pagination?: {
+        totalPage?: string
+        nextPage?: string
     }
 }
 

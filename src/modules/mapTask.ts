@@ -8,7 +8,7 @@ export async function mapTask(
     getData: (target: string, retryTimes?: number) => Promise<CollectRowListItem[]>,
     options: TaskOption
 ): Promise<CollectRowListItem[]> {
-    const { interval = 1000, parallelLimit = 1, retryTimes, flattenList = true } = options
+    const { interval = 1000, parallelLimit = 1, retryTimes } = options
 
     return await new Promise((resolve, reject) => {
         Async.mapLimit(

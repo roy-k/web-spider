@@ -1,17 +1,20 @@
 import c from 'ansi-colors'
 import cheerio from 'cheerio'
 
-import { FieldProps, SiOptions, CollectRowListItem } from '../../types'
+import { FieldProps, SiOptions, CollectRowListItem, PageData } from '../../types'
 
-export function getFieldsFromPageData(pageData: string, options: SiOptions) {
-    const { selector, key, extraInfo, page } = options
+export function getFieldsFromPageData(pageData: string, options: SiOptions): PageData {
+    const { selector, key, extraInfo, pagination } = options
 
     try {
         const $ = cheerio.load(pageData)
 
         const list = $(selector)
 
-        return Array.from(list).map(item => {
+        const pageDataResult: any = {}
+
+        // 目标元素列表
+        pageDataResult.list = Array.from(list).map(item => {
             // 1. key
             const $Item = $(item)
 
@@ -32,17 +35,32 @@ export function getFieldsFromPageData(pageData: string, options: SiOptions) {
 
             return res
         })
+
+        // 分页信息
+        if (pagination) {
+            pageDataResult.pagination = {}
+            const { totalPage, nextPage } = pagination
+            if (totalPage) {
+                const fieldValue = getElementField(list, totalPage, $)
+                pageDataResult.pagination!['totalPage'] = fieldValue
+            }
+            if (nextPage) {
+                const fieldValue = getElementField(list, nextPage, $)
+                pageDataResult.pagination!['nextPage'] = fieldValue
+            }
+        }
+        return pageDataResult as PageData
     } catch (error) {
         console.log(c.red(`解析页面出错: ${error.toString()}`))
-        return Promise.reject()
+        return { list: [] }
     }
 }
 
-export function getElementField(el: Cheerio, fieldProp: FieldProps) {
+export function getElementField(el: Cheerio, fieldProp: FieldProps, $?: CheerioStatic) {
     const { selector, selectorProps } = fieldProp
 
     try {
-        const fieldEl = el.find(selector)
+        const fieldEl = $ ? $(selector) : el.find(selector)
 
         if (!selectorProps) {
             return fieldEl.text()
