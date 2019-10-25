@@ -1,3 +1,5 @@
+import c from 'ansi-colors'
+
 /**
  * 模拟 sleep
  * @param millionSeconds 等待毫秒数
@@ -38,3 +40,33 @@ export async function repeatAsync(fn: AsyncFn, times = 1) {
         }
     }
 }
+
+/**
+ * 默认翻页地址
+ * @param target 起始页面地址
+ * @param page 页码
+ */
+export function defaultComposeUrlFn(target: string, page: number | string) {
+    return `${target}/${page}`
+}
+/**
+ * 默认格式化页码/页数
+ * @param page 页码/页数
+ */
+
+ export const defaultFormatPageFn = parseInt
+
+
+ // message
+export function warn(msg:string) {
+    console.log(c.yellow(msg))
+}
+
+export function error(msg:string) {
+    console.log(c.red(msg))
+}
+
+export function info(msg:string) {
+    console.log(msg)
+}
+
