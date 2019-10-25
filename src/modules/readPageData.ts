@@ -1,5 +1,5 @@
-import c from 'ansi-colors'
 import cheerio from 'cheerio'
+import {info, error, warn} from '../util/util'
 
 import { FieldProps, SiOptions, CollectRowListItem, PageData } from '../../types'
 
@@ -50,8 +50,8 @@ export function getFieldsFromPageData(pageData: string, options: SiOptions): Pag
             }
         }
         return pageDataResult as PageData
-    } catch (error) {
-        console.log(c.red(`解析页面出错: ${error.toString()}`))
+    } catch (err) {
+        error(`解析页面出错: ${err.toString()}`)
         return { list: [] }
     }
 }
@@ -73,7 +73,7 @@ export function getElementField(el: Cheerio, fieldProp: FieldProps, $?: CheerioS
                 fieldValue = fieldEl.text()
             } else {
                 if (!name) {
-                    console.log(c.red('when selectorProps.type != "text", name must be set'))
+                    error('when selectorProps.type != "text", name must be set')
                 } else {
                     fieldValue = name && fieldEl[type](name)
                 }
@@ -81,8 +81,8 @@ export function getElementField(el: Cheerio, fieldProp: FieldProps, $?: CheerioS
 
             return formatter ? formatter(fieldValue) : fieldValue
         }
-    } catch (error) {
-        console.log(c.red(`解析元素字段出错: ${error.toString()}`))
+    } catch (err) {
+        error(`解析元素字段出错: ${err.toString()}`)
         return ''
     }
 }
