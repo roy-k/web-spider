@@ -1,4 +1,3 @@
-import { TaskOption } from '../../types'
 import mapTaskFactory from '../../src/modules/mapTask'
 
 const tasks = ['a', 'b', 'c', 'd']
