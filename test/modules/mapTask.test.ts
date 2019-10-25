@@ -1,17 +1,17 @@
 import { TaskOption } from '../../types'
-import {mapTask} from '../../src/modules/mapTask'
+import mapTaskFactory from '../../src/modules/mapTask'
 
-const tasks = ['a', 'b']
-const option: TaskOption = {
-    interval: 1000,
-    retryTimes: 2,
-    parallelLimit: 1,
-}
+const tasks = ['a', 'b', 'c', 'd']
+
 test('mapTask', async () => {
+    const mapTask = mapTaskFactory(2, 1000)
+
     let mockFn = jest.fn().mockResolvedValue('mock')
 
-    const data = await mapTask(tasks, mockFn, option)
+    await mapTask({
+        taskList: tasks,
+        taskHandler: mockFn,
+    })
 
-    expect(mockFn).toBeCalledTimes(2)
-    expect(data.length).toBe(2)
+    expect(mockFn).toBeCalledTimes(4)
 })
