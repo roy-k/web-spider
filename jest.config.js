@@ -4,5 +4,6 @@ module.exports = {
     moduleNameMapper: {
         '^src/(.*)$': '<rootDir>/src/$1',
     },
-    silent: true
+    silent: true,
+    collectCoverage: true,
 }
