@@ -1,5 +1,5 @@
 import { MapTaskConfig } from "types"
-import { sleep, error, info } from "../util/util"
+import { sleep, error, info, warn } from "../util/util"
 
 /**
  *
@@ -9,9 +9,9 @@ import { sleep, error, info } from "../util/util"
  * @returns {mapTask, addTask} 异步并发函数, 添加新任务
  */
 export default function mapTaskFactory(parallel = 1, interval = 1000) {
-    if (parallel < 1) {
-        error("bad params parallel")
-        throw new Error("")
+    if (parallel < 1 || interval < 0) {
+        error("bad params: parallel/interval")
+        throw new Error("bad params: parallel/interval")
     }
 
     info(`taskQueue set: parallel(${parallel}), interval(${interval})`)
@@ -24,65 +24,76 @@ export default function mapTaskFactory(parallel = 1, interval = 1000) {
     let isRunning = false
     // 剩余并发数
     let restThread = parallel
-
-    let taskRunner: Function
+    // 回调只应该有一个
+    let EmitPageData: MapTaskConfig["onEmitPageData"]
 
     /**
      * 执行器
      * 调用前 抢占线程(-1), 完成/失败 后 释放(+1)
      */
-    async function runTask(
-        taskHandler: MapTaskConfig["taskHandler"],
-        onEmitPageData: MapTaskConfig["onEmitPageData"]
-    ): Promise<any> {
+    async function runTask(): Promise<any> {
         if (!taskQueue.length) {
             // todo 新进来的任务 需要启动剩余数量的任务线
             restThread += 1
             return null
         }
-        const currentTask = taskQueue.splice(0, 1)
+        const currentTask = taskQueue.splice(0, 1)[0]
 
         try {
-            const pageData = await taskHandler(currentTask)
+            const pageData = await currentTask()
 
-            if (onEmitPageData) {
-                onEmitPageData(null, pageData)
+            if (EmitPageData) {
+                EmitPageData(null, pageData)
             } else {
                 result.push(pageData)
             }
         } catch (error) {
-            onEmitPageData && onEmitPageData(error, null)
+            EmitPageData && EmitPageData(error, null)
+            // todo error 处理
             console.log(error)
+            result.push(error)
         } finally {
             await sleep(interval)
             // 这里查询剩余线程, 并启动相应数量的任务
+            restThread += 1
+            console.log("restThread", restThread)
+
             return startTask(restThread)
-            // return runTask(taskHandler, onEmitPageData)
         }
     }
 
     /** 执行传入数量的任务 */
     function startTask(number: number) {
+        if (!number) {
+            return Promise.resolve()
+        }
+        if (number === 1) {
+            restThread -= 1
+            return runTask()
+        }
+
         const tasks = Array(number)
             .fill(1)
             .map(() => {
                 restThread -= 1
-                return taskRunner()
+                return runTask()
             })
 
         return Promise.all(tasks)
     }
 
     /** 多次调用时, 后续调用将直接返回*/
-    async function mapTask({ taskList, taskHandler, onEmitPageData }: MapTaskConfig) {
+    async function mapTask({ taskList, onEmitPageData }: MapTaskConfig) {
         taskQueue = [...taskQueue, ...taskList]
 
         if (isRunning) {
+            warn("no need to run mapTask again, use addTask instead")
             return []
         }
+
         isRunning = true
 
-        taskRunner = () => runTask(taskHandler, onEmitPageData)
+        EmitPageData = onEmitPageData
 
         // 这里完成即所有任务完成才返回
         await startTask(parallel)
@@ -95,9 +106,9 @@ export default function mapTaskFactory(parallel = 1, interval = 1000) {
      * @param taskList 任务表
      */
     function addTask(taskList: MapTaskConfig["taskList"]) {
-        if (!isRunning || !taskRunner) {
+        if (!isRunning) {
             error(`'mapTask' must run before 'addTask'`)
-            return
+            throw "mapTask must run before addTask"
         }
 
         taskQueue = [...taskQueue, ...taskList]
