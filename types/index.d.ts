@@ -73,20 +73,20 @@ export type PageData = {
     }
 }
 
+/** 执行句柄 */
+type TaskHandler = () => Promise<any>
 /**
  * 并发任务配置
  */
 export type MapTaskConfig = {
-    /**`任务列表 */
-    taskList: any[]
-    /** 执行句柄 */
-    taskHandler: (params: any) => any
-    /** 单个任务回调 */
+    /**`任务列表(待执行函数) */
+    taskList: TaskHandler[]
+    /** 单任务回调 */
     onEmitPageData?: (error: any, data: any) => void
-    // todo del
     /** 并发数 */
     parallel?: number
     /** 任务间隔 */
     interval?: number
 }
 export type MapTask = (config: MapTaskConfig) => Promise<any[]>
+export type AddTask = (taskList: MapTaskConfig['taskList']) => void
