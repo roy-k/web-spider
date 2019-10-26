@@ -33,7 +33,6 @@ export default function mapTaskFactory(parallel = 1, interval = 1000) {
      */
     async function runTask(): Promise<any> {
         if (!taskQueue.length) {
-            // todo 新进来的任务 需要启动剩余数量的任务线
             restThread += 1
             return null
         }
@@ -49,15 +48,11 @@ export default function mapTaskFactory(parallel = 1, interval = 1000) {
             }
         } catch (error) {
             EmitPageData && EmitPageData(error, null)
-            // todo error 处理
-            console.log(error)
             result.push(error)
         } finally {
             await sleep(interval)
             // 这里查询剩余线程, 并启动相应数量的任务
             restThread += 1
-            console.log("restThread", restThread)
-
             return startTask(restThread)
         }
     }

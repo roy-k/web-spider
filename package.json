@@ -18,7 +18,8 @@
   },
   "keywords": [
     "spider",
-    "node"
+    "node",
+    "cheerio"
   ],
   "author": "roy",
   "license": "ISC",

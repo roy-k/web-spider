@@ -3,7 +3,7 @@ import { repeatAsync } from "../util/util"
 import { getPageData } from "./getPageData"
 import { getFieldsFromPageData } from "./readPageData"
 
-import { SiOptions, MapTask, AddTask } from "types"
+import { SiOptions, AddTask } from "types"
 
 /**
  * 默认翻页地址

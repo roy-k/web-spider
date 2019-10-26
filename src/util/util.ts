@@ -46,15 +46,15 @@ export async function repeatAsync(fn: AsyncFn, times = 1) {
  * @param target 起始页面地址
  * @param page 页码
  */
-export function defaultComposeUrlFn(target: string, page: number | string) {
-    return `${target}/${page}`
-}
+// export function defaultComposeUrlFn(target: string, page: number | string) {
+//     return `${target}/${page}`
+// }
 /**
  * 默认格式化页码/页数
  * @param page 页码/页数
  */
 
- export const defaultFormatPageFn = parseInt
+//  export const defaultFormatPageFn = parseInt
 
 
  // message
