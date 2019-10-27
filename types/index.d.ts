@@ -19,7 +19,7 @@ export type SiOptions = {
     selector: string
     /** 单项数据的 key 选择器 */
     key: FieldProps
-    onEmitPageData?: (pageData: any) => void    // todo pageData 类型
+    onEmitPageData?: (error: any, pageData: any) => void    // todo pageData 类型
     /** 附加字段信息 */
     extraInfo?: {
         [field: string]: FieldProps
