@@ -1,6 +1,14 @@
 import { MapTaskConfig } from "types"
 import { sleep, error, info, warn } from "../util/util"
+import { Browser, Page } from "puppeteer"
 
+async function initPagePool(browser: Browser, pagesNumber = 1) {
+    return Promise.all(
+        Array(Math.floor(pagesNumber))
+            .fill(1)
+            .map(async () => browser.newPage())
+    )
+}
 /**
  *
  * @export mapTask 工厂函数
@@ -8,7 +16,7 @@ import { sleep, error, info, warn } from "../util/util"
  * @param {number} [interval=1000] 间隔
  * @returns {mapTask, addTask} 异步并发函数, 添加新任务
  */
-export default function mapTaskFactory(parallel = 1, interval = 1000) {
+export default async function mapTaskFactory(browser: Browser, parallel = 1, interval = 1000) {
     if (parallel < 1 || interval < 0) {
         error("bad params: parallel/interval")
         throw new Error("bad params: parallel/interval")
@@ -16,31 +24,32 @@ export default function mapTaskFactory(parallel = 1, interval = 1000) {
 
     info(`taskQueue set: parallel(${parallel}), interval(${interval})`)
 
+    /** 标签页池 */
+    const pagePool: Page[] = await initPagePool(browser, parallel)
+
     /** 任务表 */
     let taskQueue: MapTaskConfig["taskList"] = []
     /** 返回值 */
     const result: any[] = []
     // 多次调用, 保持不变
     let isRunning = false
-    // 剩余并发数
-    let restThread = parallel
     // 回调只应该有一个
     let EmitPageData: MapTaskConfig["onEmitPageData"]
 
     /**
      * 执行器
-     * 
-     * 调用前 抢占线程(-1), 完成/失败 后 释放(+1)
      */
     async function runTask(): Promise<any> {
-        if (!taskQueue.length) {
-            restThread += 1
+        // 自取 page
+        if (!taskQueue.length || !pagePool.length) {
             return null
         }
+
         const currentTask = taskQueue.splice(0, 1)[0]
+        const page = pagePool.shift()
 
         try {
-            const pageData = await currentTask()
+            const pageData = await currentTask(page)
 
             if (EmitPageData) {
                 EmitPageData(null, pageData)
@@ -53,25 +62,20 @@ export default function mapTaskFactory(parallel = 1, interval = 1000) {
         } finally {
             await sleep(interval)
             // 这里查询剩余线程, 并启动相应数量的任务
-            restThread += 1
-            return startTask(restThread)
+            pagePool.push(page!)
+            return startTask()
         }
     }
 
     /** 执行传入数量的任务 */
-    function startTask(number: number) {
-        if (!number) {
+    function startTask() {
+        if (!taskQueue.length || !pagePool.length) {
             return Promise.resolve()
         }
-        if (number === 1) {
-            restThread -= 1
-            return runTask()
-        }
 
-        const tasks = Array(number)
+        const tasks = Array(Math.min(taskQueue.length, pagePool.length))
             .fill(1)
             .map(() => {
-                restThread -= 1
                 return runTask()
             })
 
@@ -79,7 +83,7 @@ export default function mapTaskFactory(parallel = 1, interval = 1000) {
     }
 
     /** 多次调用时, 后续调用将直接返回*/
-    async function mapTask({ taskList, onEmitPageData }: MapTaskConfig) {
+    async function mapDynamicTask({ taskList, onEmitPageData }: MapTaskConfig) {
         taskQueue = [...taskQueue, ...taskList]
 
         if (isRunning) {
@@ -92,7 +96,7 @@ export default function mapTaskFactory(parallel = 1, interval = 1000) {
         EmitPageData = onEmitPageData
 
         // 这里完成即所有任务完成才返回
-        await startTask(parallel)
+        await startTask()
 
         return result
     }
@@ -111,7 +115,7 @@ export default function mapTaskFactory(parallel = 1, interval = 1000) {
     }
 
     return {
-        mapTask,
+        mapDynamicTask,
         addTask,
     }
 }
