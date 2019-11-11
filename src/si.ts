@@ -2,6 +2,7 @@ import { SiConfig, SiTarget} from "../types"
 
 import { error } from "./util/util"
 import handleStaticPage from "./modules/handleStaticPage"
+import handelDynamicPage from "./modules/handelDynamicPage"
 
 /**
  * 检查配置
@@ -65,6 +66,7 @@ export async function si(config: SiConfig) {
 
     if(mode === 'dynamic') {
         // todo 动态页面
+        return handelDynamicPage(targetList, options)
     }
 }
 

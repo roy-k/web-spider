@@ -2,9 +2,9 @@ import mapDynamicTaskFactory from "./mapDynamicTask"
 import { repeatAsync } from "../util/util"
 import { getPageData } from "./getPageData"
 import { getFieldsFromPageData } from "./readPageData"
-import puppeteer, { Page } from "puppeteer"
+import puppeteer, { Page, ElementHandle } from "puppeteer"
 
-import { SiOptions, AddTask, PageData } from "types"
+import { SiOptions, AddTask, PageData, FieldProps, CollectRowListItem } from "types"
 
 /**
  * 默认翻页地址
@@ -22,23 +22,73 @@ function defaultFormatPageFn(page: string) {
     return parseInt(page)
 }
 
-async function fetchAndReadPage(page: Page, target: string, options: SiOptions) {
+async function fetchAndReadPage(page: Page, target: string, options: SiOptions): Promise<any> {
     const { retryTimes, selector, key, extraInfo, pagination } = options
 
     // todo 重试等?
-    // const page 
-    await page.goto(target, {waitUntil: 'networkidle0'})
-
-    const list = await page.$$(selector)
-
-    const pageDataList = list.map((el) => {
-        return {}
-        // todo 获取页面元素信息
-    })
+    await page.goto(target, { waitUntil: "networkidle2" })
 
     // 2. 解析数据
-    // todo page...
-    return {list: pageDataList} as PageData
+    // todo 要传入更多东西
+    const list = await page.$$eval(
+        selector,
+        (elements, { key, extraInfo }) => {
+            // 这里要处理完
+
+            function getElementField(context: any, fieldProps: FieldProps) {
+                try {
+                    const { selector, selectorProps } = fieldProps
+
+                    const el = context.querySelector(selector)
+
+                    if (!selectorProps) {
+                        return el.innerText
+                    }
+
+                    const { type, name, formatter } = selectorProps
+
+                    switch (name) {
+                        case "href":
+                            return el.href
+                            break
+                        case "text":
+                            return el.innerText
+                            break
+                        case "href":
+                            return el.href
+                            break
+
+                        default:
+                            return ""
+                            break
+                    }
+                } catch (error) {
+                    return null
+                }
+            }
+            return elements.map(el => {
+                const keyValue = getElementField(el, key)
+
+                const res: CollectRowListItem = {
+                    key: keyValue,
+                }
+
+                if (extraInfo) {
+                    res.extraInfo = {}
+
+                    Object.keys(extraInfo).forEach(key => {
+                        const fieldValue = getElementField(el, extraInfo[key])
+                        res.extraInfo![key] = fieldValue
+                    })
+                }
+
+                return res
+            })
+        },
+        { key, extraInfo }
+    )
+
+    return { list }
 }
 
 function resolvePage(options: SiOptions, addTask: AddTask, onlyContent = false) {
@@ -93,7 +143,9 @@ function resolvePage(options: SiOptions, addTask: AddTask, onlyContent = false) 
 async function handleDynamicPage(targetList: string[], options: SiOptions) {
     // * launch
     const browser = await puppeteer.launch({
-        headless: false,
+        // headless: false,
+        // timeout: 60000
+        // devtools: true,
     })
 
     // 1. mapTask
@@ -102,10 +154,12 @@ async function handleDynamicPage(targetList: string[], options: SiOptions) {
     // 2. handle 函数
     const taskHandler = resolvePage(options, addTask)
     const taskList = targetList.map(target => (page: Page) => taskHandler(page, target))
-    
+
     // 3. emitPageData
     return mapDynamicTask({
         taskList,
         onEmitPageData,
     })
 }
+
+export default handleDynamicPage
