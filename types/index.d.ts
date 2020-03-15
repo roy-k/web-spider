@@ -18,10 +18,10 @@ export type SiOptions = {
     /** 目标dom选择器 */
     selector: string
     /** 单项数据的 key 选择器 */
-    key: FieldProps
+    // key: FieldProps
     onEmitPageData?: (error: any, pageData: any) => void    // todo pageData 类型
     /** 附加字段信息 */
-    extraInfo?: {
+    fields: {
         [field: string]: FieldProps
     }
     /** 分页相关设计 */
@@ -57,11 +57,11 @@ export type SiConfig = {
 }
 
 export type CollectRowListItem = {
-    key: string
-    extraInfo?: {
-        [props: string]: string
-    }
-
+    // key: string
+    // extraInfo?: {
+    //     [props: string]: string
+    // }
+    [props: string]: any
 }
 
 /** 返回的数据格式 */

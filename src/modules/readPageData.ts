@@ -1,10 +1,10 @@
 import cheerio from 'cheerio'
-import {info, error, warn} from '../util/util'
+import { info, error, warn } from '../util/util'
 
 import { FieldProps, SiOptions, CollectRowListItem, PageData } from '../../types'
 
 export function getFieldsFromPageData(pageData: string, options: SiOptions): PageData {
-    const { selector, key, extraInfo, pagination } = options
+    const { selector, fields, pagination } = options
 
     try {
         const $ = cheerio.load(pageData)
@@ -15,23 +15,14 @@ export function getFieldsFromPageData(pageData: string, options: SiOptions): Pag
 
         // 目标元素列表
         pageDataResult.list = Array.from(list).map(item => {
-            // 1. key
             const $Item = $(item)
 
-            const keyValue = getElementField($Item, key)
+            const res: CollectRowListItem = {}
 
-            const res: CollectRowListItem = {
-                key: keyValue,
-            }
-
-            if (extraInfo) {
-                res.extraInfo = {}
-
-                Object.keys(extraInfo).forEach(key => {
-                    const fieldValue = getElementField($Item, extraInfo[key])
-                    res.extraInfo![key] = fieldValue
-                })
-            }
+            Object.entries(fields).forEach(([key, fieldProp]) => {
+                const fieldValue = getElementField($Item, fieldProp)
+                res[key] = fieldValue
+            })
 
             return res
         })
