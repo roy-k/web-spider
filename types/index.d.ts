@@ -5,7 +5,7 @@ export type SiTarget = string | string[] | TargetGenerator
 export type SelectorProps = {
     type?: 'text' | 'prop' | 'attr'
     name?: string
-    formatter?: (text: string) => string
+    formatter?: (text: string) => any
 }
 
 export type FieldProps = {
