@@ -1,5 +1,6 @@
-# web-spider
-make up a web spider with a few regular module。
+# spider-node
+
+make up a node spider with a few regular module。
 
 ## RoadMap
 
@@ -9,14 +10,12 @@ make up a web spider with a few regular module。
 - [x] 附加字段信息抓取
 - [x] 分页循环执行, 间隔
 - [x] 并发
-- [ ] 结果过滤
 
 
 **动态站点**
 
 - [ ] 列表项信息抓取
 - [ ] 附加字段信息抓取
-- [ ] 结果过滤
 - [ ] 分页循环执行, 间隔
 - [ ] 并发
 
@@ -46,7 +45,7 @@ export type SiOptions = {
     selector: string
     /** 单项数据的 key 选择器 */
     key: FieldProps
-    onEmitPageData?: (pageData: any) => void 
+    onEmitPageData?: (error: any, pageData: any) => void
     /** 附加字段信息 */
     extraInfo?: {
         [field: string]: FieldProps

@@ -59,7 +59,7 @@ function resolvePage(options: SiOptions, addTask: AddTask, onlyContent = false) 
         // 3.1 多页 total
         if (totalPage) {
             const restTaskLength = formatFieldsValue(totalPage) - 1
-            if (restTaskLength > 0) {
+            if (restTaskLength < 0) {
                 return result
             }
 
@@ -68,10 +68,9 @@ function resolvePage(options: SiOptions, addTask: AddTask, onlyContent = false) 
             const onlyContentHandler = resolvePage(options, addTask, true)
 
             const taskList = new Array(restTaskLength).fill(1).map((i, index) => {
-                const targetUrl = composeUrlFn(target!, index + 1)
+                const targetUrl = composeUrlFn(target!, index + 2)
                 return () => onlyContentHandler(targetUrl)
             })
-
             addTask(taskList)
         } else if (nextPage) {
             // todo 都有什么类型的下一页
