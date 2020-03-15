@@ -1,10 +1,10 @@
-import mapDynamicTaskFactory from "./mapDynamicTask"
-import { repeatAsync } from "../util/util"
-import { getPageData } from "./getPageData"
-import { getFieldsFromPageData } from "./readPageData"
-import puppeteer, { Page, ElementHandle } from "puppeteer"
+import mapDynamicTaskFactory from './mapDynamicTask'
+import { repeatAsync } from '../util/util'
+import { getPageData } from './getPageData'
+import { getFieldsFromPageData } from './readPageData'
+import puppeteer, { Page, ElementHandle } from 'puppeteer'
 
-import { SiOptions, AddTask, PageData, FieldProps, CollectRowListItem } from "types"
+import { SiOptions, AddTask, PageData, FieldProps, CollectRowListItem } from 'types'
 
 /**
  * 默认翻页地址
@@ -23,18 +23,17 @@ function defaultFormatPageFn(page: string) {
 }
 
 async function fetchAndReadPage(page: Page, target: string, options: SiOptions): Promise<any> {
-    const { retryTimes, selector, key, extraInfo, pagination } = options
+    const { retryTimes, selector, fields, pagination } = options
 
     // todo 重试等?
-    await page.goto(target, { waitUntil: "networkidle2" })
+    await page.goto(target, { waitUntil: 'networkidle2' })
 
     // 2. 解析数据
     // todo 要传入更多东西
     const list = await page.$$eval(
         selector,
-        (elements, { key, extraInfo }) => {
+        (elements, { fields }: { fields: FieldProps }) => {
             // 这里要处理完
-
             function getElementField(context: any, fieldProps: FieldProps) {
                 try {
                     const { selector, selectorProps } = fieldProps
@@ -48,18 +47,18 @@ async function fetchAndReadPage(page: Page, target: string, options: SiOptions):
                     const { type, name, formatter } = selectorProps
 
                     switch (name) {
-                        case "href":
+                        case 'href':
                             return el.href
                             break
-                        case "text":
+                        case 'text':
                             return el.innerText
                             break
-                        case "href":
+                        case 'href':
                             return el.href
                             break
 
                         default:
-                            return ""
+                            return ''
                             break
                     }
                 } catch (error) {
@@ -67,25 +66,16 @@ async function fetchAndReadPage(page: Page, target: string, options: SiOptions):
                 }
             }
             return elements.map(el => {
-                const keyValue = getElementField(el, key)
+                const res: CollectRowListItem = {}
 
-                const res: CollectRowListItem = {
-                    key: keyValue,
-                }
-
-                if (extraInfo) {
-                    res.extraInfo = {}
-
-                    Object.keys(extraInfo).forEach(key => {
-                        const fieldValue = getElementField(el, extraInfo[key])
-                        res.extraInfo![key] = fieldValue
-                    })
-                }
-
+                Object.entries(fields).forEach(([key, fieldProp]) => {
+                    const fieldValue = getElementField(el, fieldProp)
+                    res[key] = fieldValue
+                })
                 return res
             })
         },
-        { key, extraInfo }
+        { fields }
     )
 
     return { list }
