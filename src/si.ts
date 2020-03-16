@@ -9,8 +9,8 @@ import handelDynamicPage from "./modules/handelDynamicPage";
  * @param config SiConfig
  */
 function checkSiConfig(config: SiConfig): boolean {
-  if (config.target) {
-    error("config error: target/key can not be empty");
+  if (!config.target) {
+    error("config error: config.target can not be empty");
     return false;
   }
 

@@ -1,6 +1,6 @@
 {
   "name": "siphon-web",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "make up a web spider with a few regular module。",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
