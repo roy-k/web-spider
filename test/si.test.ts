@@ -11,14 +11,15 @@ const rowListWithoutPage: SiConfig = {
     target: 'http://localhost:3098/page1.html',
     options: {
         selector: '.item-list',
-        key: {
+        fields: {
+            key: {
             selector: '.post-box-title a',
-
             selectorProps: {
                 type: 'prop',
                 name: 'href',
             },
         },
+        }
     },
 }
 test('single page', async () => {
@@ -37,13 +38,15 @@ const rowListWithPage: SiConfig = {
     },
     options: {
         selector: '.item-list',
-        key: {
+        fields: {
+            key: {
             selector: '.post-box-title a',
             selectorProps: {
                 type: 'prop',
                 name: 'href',
             },
         },
+        }
     },
 }
 test('muti pages', async () => {

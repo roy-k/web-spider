@@ -1,5 +1,5 @@
-import { SiOptions } from '../../types'
-import { getFieldsFromPageData } from '../../src/modules/readPageData'
+import { SiOptions } from "../../types";
+import { getFieldsFromPageData } from "../../src/modules/readPageData";
 
 const pageString = `<!DOCTYPE html>
     <html lang="zh-CN">
@@ -17,37 +17,35 @@ const pageString = `<!DOCTYPE html>
         </div>
     </body>
 </html>
-`
+`;
 const option: SiOptions = {
-    selector: '.item-list',
+  selector: ".item-list",
+  fields: {
     key: {
-        selector: '.post-box-title a',
-        selectorProps: {
-            type: 'prop',
-            name: 'href',
-        },
+      selector: ".post-box-title a",
+      selectorProps: {
+        type: "prop",
+        name: "href",
+      },
     },
-    extraInfo: {
-        title: {
-            selector: '.post-box-title a',
-        },
-        views: {
-            selector: '.post-meta .post-views',
-            selectorProps: {
-                formatter: (text: string) => text.trim(),
-            },
-        },
+    title: {
+      selector: ".post-box-title a",
     },
-}
-test('getFieldsFromPageData', async () => {
-    const data = await getFieldsFromPageData(pageString, option)
-    expect(data && data.list.length).toBe(1)
+    views: {
+      selector: ".post-meta .post-views",
+      selectorProps: {
+        formatter: (text: string) => text.trim(),
+      },
+    },
+  },
+};
+test("getFieldsFromPageData", async () => {
+  const data = await getFieldsFromPageData(pageString, option);
+  expect(data && data.list.length).toBe(1);
 
-    const first = data && data.list[0]
+  const first = data && data.list[0];
 
-    const { key, extraInfo = {} } = first
-
-    expect(key).toMatch(/.+/)
-    expect(extraInfo.title).toMatch(/.+/)
-    expect(extraInfo.views).toMatch(/.+/)
-})
+  expect(first.key).toMatch(/.+/);
+  expect(first.title).toMatch(/.+/);
+  expect(first.views).toMatch(/.+/);
+});

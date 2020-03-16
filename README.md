@@ -1,6 +1,6 @@
 # spider-node
 
-make up a node spider with a few regular module。
+    简单爬虫模块, 通过配置来组装一个爬虫
 
 ## RoadMap
 
@@ -14,10 +14,11 @@ make up a node spider with a few regular module。
 
 **动态站点**
 
-- [ ] 列表项信息抓取
-- [ ] 附加字段信息抓取
-- [ ] 分页循环执行, 间隔
-- [ ] 并发
+- [x] 列表项信息抓取
+- [x] 附加字段信息抓取
+- [x] 分页循环执行, 间隔
+- [x] 并发
+- [ ] 多种属性支持
 
 ## docs
 
@@ -44,10 +45,10 @@ export type SiOptions = {
     /** 目标dom选择器 */
     selector: string
     /** 单项数据的 key 选择器 */
-    key: FieldProps
+    // key: FieldProps 移动到 fields中
     onEmitPageData?: (error: any, pageData: any) => void
     /** 附加字段信息 */
-    extraInfo?: {
+    fields?: {
         [field: string]: FieldProps
     }
     /** 分页相关设计 */
@@ -82,3 +83,8 @@ export type SiOptions = {
 ```ts
 // see test/si.test.ts
 ```
+
+**2019-3-16**
+
+    - 增加动态站点支持
+    - 更新配置字段

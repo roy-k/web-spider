@@ -32,7 +32,7 @@ async function fetchAndReadPage(page: Page, target: string, options: SiOptions):
     // todo 要传入更多东西
     const list = await page.$$eval(
         selector,
-        (elements, { fields }: { fields: FieldProps }) => {
+        (elements, { fields }: { fields: {[props: string]:FieldProps} }) => {
             // 这里要处理完
             function getElementField(context: any, fieldProps: FieldProps) {
                 try {

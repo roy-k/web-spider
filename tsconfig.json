@@ -1,35 +1,26 @@
 {
-    "compilerOptions": {
-        "target": "ES6",
-        "module": "commonjs",
-        "moduleResolution": "node",
-        "declaration": true,
-        "sourceMap": true,
-        "removeComments": true,
-        "noImplicitAny": true,
-        "emitDecoratorMetadata": false,
-        "experimentalDecorators": false,
-        "lib": [
-            "esnext"
-        ],
-        "outDir": "lib",
-        "strict": true,
-        "baseUrl": "./",
-        "paths": {
-            "src/*": [
-                "src/*"
-            ]
-        },
-        "esModuleInterop": true,
-        "resolveJsonModule": true,
-        "allowSyntheticDefaultImports": true,
-        "listEmittedFiles": true
+  "compilerOptions": {
+    "target": "ES6",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "declaration": true,
+    "sourceMap": true,
+    "removeComments": true,
+    "noImplicitAny": true,
+    "emitDecoratorMetadata": false,
+    "experimentalDecorators": false,
+    "lib": ["esnext", "DOM"],
+    "outDir": "lib",
+    "strict": true,
+    "baseUrl": "./",
+    "paths": {
+      "src/*": ["src/*"]
     },
-    "include": [
-        "src"
-    ],
-    "exclude": [
-        "node_modules",
-        "**/*.test.ts"
-    ]
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
+    "listEmittedFiles": true
+  },
+  "include": ["src"],
+  "exclude": ["node_modules", "**/*.test.ts"]
 }
